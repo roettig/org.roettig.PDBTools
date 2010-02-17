@@ -4,6 +4,9 @@ import java.io.Serializable;
 
 public class Vector3 implements Serializable
 {
+
+  private static final long serialVersionUID = 6167184707451296274L;
+  
   public Vector3()
   {
 	

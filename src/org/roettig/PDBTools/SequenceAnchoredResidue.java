@@ -1,20 +1,33 @@
 package org.roettig.PDBTools;
 
+import java.io.Serializable;
+
 import org.biojava.bio.structure.*;
 
-public class SequenceAnchoredResidue
+public class SequenceAnchoredResidue implements Serializable
 {
+    
+    
+   private static final long serialVersionUID = -6484969438097777417L;
+   
    public SequenceAnchoredResidue(Group g, int sI, int pI)
    {
-      group = g; seqIdx = sI; pdbIdx = pI;    
+      //group = g; 
+      seqIdx   = sI; pdbIdx = pI;
+      pdbCode  = g.getPDBCode();
+      pdbName  = g.getPDBName();
+      pdbChain = g.getParent().getName();
    }
    
    public String toString()
    {
-       return group.getPDBCode()+" "+group.getPDBName()+" ["+pdbIdx+","+seqIdx+"]";
+       return pdbChain+" "+pdbCode+" "+pdbName+" ["+pdbIdx+","+seqIdx+"]";
    }
    
-   public Group  group;
+   //public Group  group;
+   public String pdbChain;
+   public String pdbCode;
+   public String pdbName;
    public int    seqIdx;
    public int    pdbIdx;
 }
