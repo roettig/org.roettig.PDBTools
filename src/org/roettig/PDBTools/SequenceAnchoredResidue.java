@@ -21,7 +21,7 @@ public class SequenceAnchoredResidue implements Serializable
    
    public String toString()
    {
-       return pdbChain+" "+pdbCode+" "+pdbName+" ["+pdbIdx+","+seqIdx+"]";
+       return pdbChain+" "+pdbCode+" "+pdbName+" [pdbIdx:"+pdbIdx+",seqIdx:"+seqIdx+"]";
    }
    
    //public Group  group;
