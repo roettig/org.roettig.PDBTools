@@ -1,29 +1,16 @@
 package org.roettig.PDBTools;
 
-import java.util.Properties;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 import org.biojava.bio.seq.Sequence;
-import java.io.*;
-import java.net.URL;
 import java.util.*;
 import java.util.logging.Logger;
-
-
-
 import org.biojava.bio.*;
-import org.biojava.bio.seq.db.*;
-import org.biojava.bio.seq.impl.SimpleFeature;
 import org.biojava.bio.seq.impl.SimpleSequenceFactory;
 import org.biojava.bio.seq.io.*;
 import org.biojava.bio.symbol.*;
 import org.biojava.bio.structure.*;
-import org.biojava.bio.structure.io.PDBFileReader;
-
-import org.biojava.bio.seq.*;
-import org.biojava.utils.ChangeVetoException;
 import org.roettig.SequenceTools.PairwiseAlignment;
 import org.roettig.SequenceTools.SeqTools;
 import org.biojava.bio.symbol.SimpleSymbolList;
@@ -54,13 +41,13 @@ public class PDBTools
              if( g.getPDBName().equals(rl.name) && Integer.parseInt(g.getPDBCode())==rl.idx)
              {
                 found = true;
-                logger.info("found group "+rl);
+                logger.info("found requested group "+rl);
              }
           }
         }
         if(!found)
         {
-            logger.info("did not find group "+rl);
+            logger.info("did not find requested group "+rl);
         }
       return found;
     }
@@ -80,18 +67,17 @@ public class PDBTools
             List<Group> agr = ch.getAtomGroups();
             for(Group g: agr)
             {
-               //System.out.println(ch.getName()+" "+g.getPDBName()+" "+g.getPDBCode() );
                if( g.getPDBName().equals(rl.name) && Integer.parseInt(g.getPDBCode())==rl.idx)
                {
                   centers.addElement( g );
                   found = true;
-                  logger.info("found group "+rl);
+                  logger.info("found requested group "+rl);
                }
             }
           }
           if(!found)
           {
-              logger.info("did not find group "+rl);
+              logger.info("did not find requested group "+rl);
           }
         }
         return centers;
@@ -126,7 +112,6 @@ public class PDBTools
           }
           if(minD<cutoff)
               ret.add( g1 );
-          //System.out.println(g1.getPDBCode()+" "+g1.getPDBName()+ " minD="+minD);
         }    
         return ret;
     }
@@ -169,20 +154,11 @@ public class PDBTools
         
         Sequence seqChain1 = getSequence(chain1,seqIDX2pdbIDX,pdbIDX2seqIDX);
         
-        for(Integer i: seqIDX2pdbIDX.keySet())
-        {
-            //System.out.println(i+" -> "+seqIDX2pdbIDX.get(i));
-            //logger.info("");
-        }
-        
-        //System.out.println("#"+seqChain1.seqString());
-        
         PairwiseAlignment pwa = new PairwiseAlignment();
         
         for(Chain c: chains)
         {
             Sequence seqChain = getSequence(c,null,null);
-            //System.out.println("#"+seqChain.seqString());
             
             double pid = 0.0;
             try
@@ -199,7 +175,8 @@ public class PDBTools
                 Vector<String> allowed = new Vector<String>();
                 allowed.addElement("MSE");
                 allowed.addElement("175");
-                logger.info("examining chain "+c.getName());
+                logger.info("examining chain "+c.getName()+" (which is identical to first chain)");
+                
                 List<Group> groups  = getGroups( c , allowed);
                 List<Group> vinc    = getNearbyGroups(groups,centers, cutoff);
                 List<Group> vinc2   = getNearbyGroups2(groups,positions, cutoff);
@@ -246,7 +223,6 @@ public class PDBTools
             if ( g instanceof AminoAcid )
             {
                 AminoAcid aa = (AminoAcid) g;
-                //System.out.println(aa.getPDBCode()+" "+aa.getPDBName());
                 seq += SeqTools.ThreeLetterToShort(aa.getPDBName());
                 if(seqIDX2pdbIDX!=null)
                    seqIDX2pdbIDX.put(seq.length(), Integer.parseInt(aa.getPDBCode()));
@@ -272,8 +248,6 @@ public class PDBTools
         Sequence pdbseq = null;
         try
         {
-            //seq = seq.replaceAll("X", "O");
-            //pdbseq = ProteinTools.createProteinSequence(seq, "pdb");
             FiniteAlphabet fa = (FiniteAlphabet) AlphabetManager.alphabetForName("PROTEIN");
             SymbolTokenization p = null;
 	    try
@@ -282,7 +256,6 @@ public class PDBTools
 	    } 
 	    catch (BioException e)
 	    {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
 	    }
             SymbolList sl = new SimpleSymbolList(p, seq);
@@ -302,7 +275,7 @@ public class PDBTools
     public static Vector<Group> getGroups(Chain c)
     {
         Vector<Group> aas = new Vector<Group>();
-        List<Group> agr = c.getAtomGroups("amino");
+        List<Group>   agr = c.getAtomGroups("amino");
         for(Group g: agr)
         {
             if(!g.has3D())
