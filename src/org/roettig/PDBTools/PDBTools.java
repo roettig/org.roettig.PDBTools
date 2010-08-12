@@ -244,8 +244,15 @@ public class PDBTools
                 for(Group g: vinc)
                 {
                     //AminoAcid aa = (AminoAcid) g;
+                    if(!(g instanceof AminoAcid))
+                	continue;
+                    System.out.println(g.getPDBName()+" "+g.getPDBCode());
                     Integer pI = Integer.parseInt(g.getPDBCode());
                     Integer pS = pdbIDX2seqIDX.get(pI);
+                    
+                    if(pI==null || pS==null)
+                	continue;
+                    
                     SequenceAnchoredResidue ascr = new SequenceAnchoredResidue(g, pS, pI );
                     ascresidues.addElement(ascr);
                     collected.add(g);
@@ -254,9 +261,15 @@ public class PDBTools
                 {
                     if(collected.contains(g))
                          continue;
+                    if(!(g instanceof AminoAcid))
+                	continue;
                     //AminoAcid aa = (AminoAcid) g;
                     Integer pI = Integer.parseInt(g.getPDBCode());
                     Integer pS = pdbIDX2seqIDX.get(pI);
+                    
+                    if(pI==null || pS==null)
+                	continue;
+                    
                     SequenceAnchoredResidue ascr = new SequenceAnchoredResidue(g, pS, pI );
                     ascresidues.addElement(ascr);
                 }                
@@ -425,8 +438,61 @@ public class PDBTools
         return aas;
     }
     
+    public static Atom getAtom(Group g, String name)
+    {
+	Atom ret = null;
+	for(Atom at: g.getAtoms())
+	{
+	    if(at.getName().equals(name))
+	    {
+		return at;
+	    }
+	}
+	return ret;
+    }
+    
+    public static void structuralAlignment(Structure s1, Structure s2)
+    {
+	Chain c1 = s1.getChain(0);
+	Chain c2 = s2.getChain(0);
+	List<Group>   aa1 = c1.getAtomGroups("amino");
+	List<Group>   aa2 = c2.getAtomGroups("amino");
+	for(int i=0;i<aa1.size();i++)
+	{
+	    double min = 1000;
+	    Atom  minAtom=null;
+	    Group minGroup=null;
+	    Atom ca1 = getAtom(aa1.get(i),"CA");
+
+	    for(int j=0;j<aa2.size();j++)
+	    {
+		
+		Atom ca2 = getAtom(aa2.get(j),"CA");
+			
+		double dist=1000;
+		try
+		{
+		    dist = Calc.getDistance(ca1,ca2);
+		} 
+		catch (StructureException e)
+		{
+		    e.printStackTrace();
+		}
+		
+		if(dist<min)
+		{
+		    min = dist;
+		    minAtom = ca2;
+		    minGroup = aa2.get(j);
+		}
+	    }
+	    System.out.println(aa1.get(i).getPDBCode()+" "+minGroup.getPDBCode()+" d="+min);
+	}
+    }
+    
     public static void main(String args[]) throws StructureException, FileNotFoundException
     {
+	/*
 	PDBFileReader pdbreader = new PDBFileReader();
         
         Structure struc = null;
@@ -446,5 +512,30 @@ public class PDBTools
         PrintWriter raus = new PrintWriter("/tmp/raus");
         writeAtomData(raus,gs);
         raus.close();
+        */
+	
+	PDBFileReader pdbreader = new PDBFileReader();
+        
+        Structure struc1 = null;
+        try
+        {
+         struc1 = pdbreader.getStructure("/tmp/a.pdb");
+        }
+        catch(Exception e)
+        {
+         
+        }
+        
+        PDBFileReader pdbreader2 = new PDBFileReader();
+        Structure struc2 = null;
+        try
+        {
+         struc2 = pdbreader2.getStructure("/tmp/molb.pdb");
+        }
+        catch(Exception e)
+        {
+         
+        }
+        structuralAlignment(struc1,struc2);
     }
 }
