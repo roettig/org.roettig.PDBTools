@@ -243,10 +243,10 @@ public class PDBTools
                 
                 for(Group g: vinc)
                 {
-                    //AminoAcid aa = (AminoAcid) g;
+
                     if(!(g instanceof AminoAcid))
                 	continue;
-                    System.out.println(g.getPDBName()+" "+g.getPDBCode());
+
                     Integer pI = Integer.parseInt(g.getPDBCode());
                     Integer pS = pdbIDX2seqIDX.get(pI);
                     
@@ -263,7 +263,7 @@ public class PDBTools
                          continue;
                     if(!(g instanceof AminoAcid))
                 	continue;
-                    //AminoAcid aa = (AminoAcid) g;
+
                     Integer pI = Integer.parseInt(g.getPDBCode());
                     Integer pS = pdbIDX2seqIDX.get(pI);
                     
