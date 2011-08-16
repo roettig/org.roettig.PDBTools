@@ -2,6 +2,12 @@ package org.roettig.PDBTools;
 
 import java.io.Serializable;
 
+/**
+ * The Vector3 class represent three-dimensional vectors.
+ * 
+ * @author roettig
+ *
+ */
 public class Vector3 implements Serializable
 {
 
@@ -17,6 +23,12 @@ public class Vector3 implements Serializable
 		x = _x; y= _y; z = _z;
 	}
 
+	/**
+	 * calculates the euclidean distance between the vectors.
+	 * 
+	 * @param v
+	 * @return euclidean distance
+	 */
 	public double distance(Vector3 v)
 	{
 		return Math.sqrt(Math.pow(v.x-x,2)+Math.pow(v.y-y,2)+Math.pow(v.z-z,2));

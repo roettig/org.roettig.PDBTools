@@ -1,6 +1,6 @@
 package org.roettig.PDBTools;
 
-import java.io.FileNotFoundException;
+
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
@@ -13,12 +13,16 @@ import org.biojava.bio.seq.impl.SimpleSequenceFactory;
 import org.biojava.bio.seq.io.*;
 import org.biojava.bio.symbol.*;
 import org.biojava.bio.structure.*;
-import org.biojava.bio.structure.io.PDBFileReader;
-import org.biojava.bio.structure.io.StructureIOFile;
 import org.roettig.SequenceTools.PairwiseAlignment;
 import org.roettig.SequenceTools.SeqTools;
 import org.biojava.bio.symbol.SimpleSymbolList;
 
+/**
+ * The PDBTools class offers some helper methods to work with PDB structures.
+ * 
+ * @author roettig
+ *
+ */
 public class PDBTools
 {
 
@@ -30,6 +34,14 @@ public class PDBTools
 		return ret;
 	}
 
+	/**
+	 * checks whether the supplied PDB structure contains a group/residue identified by the supplied
+	 * residue locator.
+	 *  
+	 * @param struc haystack structure
+	 * @param rl residue locator
+	 * @return
+	 */
 	public static boolean hasGroup(Structure struc, ResidueLocator rl)
 	{
 		List<Chain> chains    = struc.getChains(0);
@@ -56,6 +68,12 @@ public class PDBTools
 		return found;
 	}
 
+	/**
+	 * returns the elemtal symbol as string of a supplied atom.
+	 * 
+	 * @param at
+	 * @return elemental symbol as string
+	 */
 	private static String getElement(Atom at)
 	{
 		if(at.getName().contains("C"))
@@ -73,6 +91,11 @@ public class PDBTools
 		return " ";
 	}
 
+	/**
+	 * writes out atom records in PDBFormat of supplied residues. 
+	 * @param out
+	 * @param groups
+	 */
 	public static void writeAtomData(PrintWriter out, List<Group> groups)
 	{
 
@@ -87,8 +110,6 @@ public class PDBTools
 				Record_ID = "HETATM";
 			for(Atom at: g.getAtoms())
 			{
-				//System.out.println(String.format("%5d",idx));
-				//                                         "%5d %-4.4s%c%3.3s %c%4d%c   %8.3f%8.3f%8.3f%6.2f%6.2f      %4.4s%2.2s%2.2s"
 				out.write(String.format(Locale.ENGLISH,"%-6s%5d %-4.4s%s%3.3s %s%4d%s   %8.3f%8.3f%8.3f%6.2f%6.2f      %4.4s%2.2s%2.2s\n",
 						Record_ID,
 						idx,
@@ -488,54 +509,5 @@ public class PDBTools
 			}
 			System.out.println(aa1.get(i).getPDBCode()+" "+minGroup.getPDBCode()+" d="+min);
 		}
-	}
-
-	public static void main(String args[]) throws StructureException, FileNotFoundException
-	{
-		/*
-	PDBFileReader pdbreader = new PDBFileReader();
-
-        Structure struc = null;
-        try
-        {
-         struc = pdbreader.getStructure("/tmp/pdbfile");
-        }
-        catch(Exception e)
-        {
-
-        }
-        Group g = struc.findGroup("A","234");
-        System.out.println(g);
-        List<Group> gs = new ArrayList<Group>();
-        gs.add(g);
-        gs.add(g);
-        PrintWriter raus = new PrintWriter("/tmp/raus");
-        writeAtomData(raus,gs);
-        raus.close();
-		 */
-
-		PDBFileReader pdbreader = new PDBFileReader();
-
-		Structure struc1 = null;
-		try
-		{
-			struc1 = pdbreader.getStructure("/tmp/a.pdb");
-		}
-		catch(Exception e)
-		{
-
-		}
-
-		PDBFileReader pdbreader2 = new PDBFileReader();
-		Structure struc2 = null;
-		try
-		{
-			struc2 = pdbreader2.getStructure("/tmp/molb.pdb");
-		}
-		catch(Exception e)
-		{
-
-		}
-		structuralAlignment(struc1,struc2);
 	}
 }
